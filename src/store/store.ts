@@ -1,31 +1,42 @@
-import {create} from 'zustand';
-import type { DraftPatient, Patient } from '../types';
-import { v4 as uid } from 'uuid';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import type { DraftPatient, Patient } from "../types";
+import { v4 as uid } from "uuid";
 
 type PatientState = {
-    patients: Patient[]
-    addPatient: (data: DraftPatient) => void
-    deletePatient: (id:Patient['id']) => void
-}
+  patients: Patient[];
+  activeId: Patient["id"];
+  addPatient: (data: DraftPatient) => void;
+  deletePatient: (id: Patient["id"]) => void;
+  getPatientById: (id: Patient["id"]) => void;
+};
 
 const createPatient = (patient: DraftPatient): Patient => {
-    return {
-        ...patient,
-        id: uid()
-    }
-}
+  return {
+    ...patient,
+    id: uid(),
+  };
+};
 
-export const usePatientStore = create<PatientState>((set)=> ({
+export const usePatientStore = create<PatientState>()(
+  devtools((set) => ({
     patients: [],
+    activeId: "",
     addPatient: (data) => {
-        const newPatient = createPatient(data)
-        set((state) => ({
-            patients: [...state.patients, newPatient]
-        }))
+      const newPatient = createPatient(data);
+      set((state) => ({
+        patients: [...state.patients, newPatient],
+      }));
     },
     deletePatient: (id) => {
-        set((state) => ({
-            patients : state.patients.filter(patient => patient.id !== id)
-        }))
-    }
-}))
+      set((state) => ({
+        patients: state.patients.filter((patient) => patient.id !== id),
+      }));
+    },
+    getPatientById: (id) => {
+      set(() => ({
+        activeId: id,
+      }));
+    },
+  })),
+);
