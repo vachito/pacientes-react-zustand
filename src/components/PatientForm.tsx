@@ -5,7 +5,7 @@ import type{ DraftPatient } from "../types";
 import { useEffect } from "react";
 
 export default function PatientForm() {
-  const {addPatient, activeId, patients} = usePatientStore()
+  const {addPatient, activeId, patients, updatePatient} = usePatientStore()
 
   const {
     register,
@@ -25,8 +25,14 @@ export default function PatientForm() {
       setValue('symptoms',activePatient.symptoms)
     }
   },[activeId])
+
   const registerPatient = (data: DraftPatient) => {
-    addPatient(data);
+    if(activeId){
+      updatePatient(data)
+    }else{
+      addPatient(data);
+    }
+    
     reset()
   };
 

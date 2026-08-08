@@ -4,11 +4,12 @@ import type { DraftPatient, Patient } from "../types";
 import { v4 as uid } from "uuid";
 
 type PatientState = {
-  patients: Patient[];
-  activeId: Patient["id"];
-  addPatient: (data: DraftPatient) => void;
-  deletePatient: (id: Patient["id"]) => void;
-  getPatientById: (id: Patient["id"]) => void;
+  patients: Patient[]
+  activeId: Patient["id"]
+  addPatient: (data: DraftPatient) => void
+  deletePatient: (id: Patient["id"]) => void
+  getPatientById: (id: Patient["id"]) => void
+  updatePatient : (data:DraftPatient) => void
 };
 
 const createPatient = (patient: DraftPatient): Patient => {
@@ -38,5 +39,11 @@ export const usePatientStore = create<PatientState>()(
         activeId: id,
       }));
     },
+    updatePatient : (data) =>{
+        set((state) => ({
+            patients: state.patients.map(patient => patient.id === state.activeId ? {id:state.activeId, ...data} : patient),
+            activeId: ''
+        }))
+    }
   })),
 );
